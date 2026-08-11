@@ -1,0 +1,1 @@
+export { seedFirestore } from './seedFirestore';

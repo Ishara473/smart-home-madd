@@ -1,0 +1,9 @@
+export const DEVICE_TYPES = {
+  LIGHT: 'LIGHT',
+  OUTLET: 'OUTLET',
+  SWITCH_PANEL: 'SWITCH_PANEL',
+  IRON: 'IRON',
+  CAMERA: 'CAMERA'
+};
+
+export default DEVICE_TYPES;
