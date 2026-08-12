@@ -43,11 +43,6 @@ jobs:
           cd mobile
           npm install --legacy-peer-deps
 
-      - name: Generate Native Android Project (Expo Prebuild)
-        run: |
-          cd mobile
-          npx expo prebuild --platform android --no-install
-
       - name: Accept Android SDK Licenses
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
