@@ -43,10 +43,6 @@ jobs:
           cd mobile
           npm install --legacy-peer-deps
 
-      - name: Install EAS CLI
-        run: |
-          npm install -g eas-cli
-
       - name: Accept Android SDK Licenses
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
@@ -56,22 +52,23 @@ jobs:
           cd mobile
           npx expo prebuild --platform android --clean
 
-      - name: Build APK via EAS Local
+      - name: Build APK via Gradle
         run: |
-          cd mobile
-          npx eas-cli build --platform android --profile preview --local --non-interactive
+          cd mobile/android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx4g"
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: SmartHome-Monitoring-v1.0.apk
-          path: mobile/build/outputs/apk/preview/*.apk
+          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
       - name: Upload APK to GitHub Release
         if: success()
         uses: softprops/action-gh-release@v2
         with:
-          files: mobile/build/outputs/apk/preview/*.apk
+          files: mobile/android/app/build/outputs/apk/debug/app-debug.apk
           tag_name: v1.0.${{ github.run_number }}
           name: Release v1.0.${{ github.run_number }}
