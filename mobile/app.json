@@ -4,6 +4,7 @@
     "slug": "smart-home-monitoring-system",
     "scheme": "smart-home-monitoring-system",
     "version": "1.0.0",
+    "sdkVersion": "52.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -25,6 +26,12 @@
     "plugins": [
       "expo-router",
       "expo-status-bar"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "7c3e64d4-324a-401c-9f02-21a49eabde5f"
+      }
+    }
   }
 }
