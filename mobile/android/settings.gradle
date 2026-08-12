@@ -1,0 +1,38 @@
+pluginManagement {
+  def reactNativeGradlePlugin = new File(
+    providers.exec {
+      workingDir(rootDir)
+      commandLine("node", "--print", "require.resolve('@react-native/gradle-plugin/package.json', { paths: [require.resolve('react-native/package.json')] })")
+    }.standardOutput.asText.get().trim()
+  ).getParentFile().absolutePath
+  includeBuild(reactNativeGradlePlugin)
+}
+
+plugins {
+  id("com.facebook.react.settings")
+}
+
+def expoPackageJsonPath = providers.exec {
+  workingDir(rootDir)
+  commandLine("node", "--print", "require.resolve('expo/package.json')")
+}.standardOutput.asText.get().trim()
+
+apply from: new File(expoPackageJsonPath, "../scripts/autolinking.gradle")
+useExpoModules()
+
+def reactNativeGradlePlugin = new File(
+  providers.exec {
+    workingDir(rootDir)
+    commandLine("node", "--print", "require.resolve('@react-native/gradle-plugin/package.json', { paths: [require.resolve('react-native/package.json')] })")
+  }.standardOutput.asText.get().trim()
+).getParentFile().absolutePath
+
+includeBuild(reactNativeGradlePlugin)
+
+extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
+  ex.autolinkLibrariesFromCommand()
+}
+
+rootProject.name = 'Smart Home Monitoring System'
+
+include ':app'
