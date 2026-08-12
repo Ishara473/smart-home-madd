@@ -28,14 +28,14 @@ jobs:
           cd mobile
           npm ci --legacy-peer-deps
 
-      - name: Build Release APK via Gradle
+      - name: Build APK via Gradle
         run: |
           cd mobile/android
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SmartHome-Monitoring-v1.0.apk
-          path: mobile/android/app/build/outputs/apk/release/app-release.apk
+          name: SmartHome-Monitoring-App.apk
+          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
