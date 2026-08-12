@@ -8,6 +8,9 @@ on:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=4096"
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -26,9 +29,14 @@ jobs:
       - name: Install Mobile Dependencies
         run: |
           cd mobile
-          npm ci --legacy-peer-deps
+          npm install --legacy-peer-deps
 
-      - name: Build APK via Gradle
+      - name: Configure Native Android Project (Expo Prebuild)
+        run: |
+          cd mobile
+          npx expo prebuild --platform android --clean --no-install
+
+      - name: Build Android APK via Gradle
         run: |
           cd mobile/android
           chmod +x gradlew
