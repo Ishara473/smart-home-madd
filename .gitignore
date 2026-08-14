@@ -86,7 +86,7 @@ mobile/ios/DerivedData/
 *.swp
 
 # AI Agent Development Tools
-.agents/
+# .agents/ - Temporarily unignored for git tracking
 skills-lock.json
 
 # OS generated files
