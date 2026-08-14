@@ -1,0 +1,35 @@
+# Development files to exclude from EAS builds
+.agents/
+skills-lock.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Development tools
+.idea/
+.vscode/
+.cursor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git files
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Firebase backend files (should be in backend/)
+firebase.json
+firestore.rules
+firestore.indexes.json
+storage.rules
+.firebaserc

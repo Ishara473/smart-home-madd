@@ -17,6 +17,7 @@ expo-env.d.ts
 *.p12
 *.key
 *.mobileprovision
+*.keystore
 
 # Metro
 .metro-health-check*
@@ -31,6 +32,11 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .env*.local
 
 # typescript
@@ -39,3 +45,17 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Development tools
+.agents/
+skills-lock.json
+.cursor/
+.idea/
+.vscode/
+
+# Firebase backend files (should be in backend/)
+firebase.json
+firestore.rules
+firestore.indexes.json
+storage.rules
+.firebaserc

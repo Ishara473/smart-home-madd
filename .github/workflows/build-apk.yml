@@ -2,73 +2,51 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main, master ]
-    tags:
-      - 'v*'
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  build-apk:
+  build:
     runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: "--max-old-space-size=4096"
-      EXPO_PUBLIC_FIREBASE_API_KEY: AIzaSyCKKBG1xohSZx8KA6xNFOmmx9anPsAzyzY
-      EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: smart-home-monitoring-sy-38505.firebaseapp.com
-      EXPO_PUBLIC_FIREBASE_PROJECT_ID: smart-home-monitoring-sy-38505
-      EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET: smart-home-monitoring-sy-38505.firebasestorage.app
-      EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: "739819003559"
-      EXPO_PUBLIC_FIREBASE_APP_ID: "1:739819003559:web:b8fb7d50a40d0517ab8582"
-      EXPO_PUBLIC_USE_MOCK_DATA: "false"
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Setup Node.js 20
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install Mobile Dependencies
+      - name: Install Dependencies
         run: |
           cd mobile
-          npm install --legacy-peer-deps
+          npm install
 
-      - name: Accept Android SDK Licenses
-        run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
 
-      - name: Generate Native Files
+      - name: Login to EAS
+        run: eas login --non-interactive --token ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build APK
         run: |
           cd mobile
-          npx expo prebuild --platform android --clean
+          eas build --platform android --profile preview --non-interactive
 
-      - name: Build APK via Gradle
+      - name: Get Build URL
         run: |
-          cd mobile/android
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon -Dorg.gradle.jvmargs="-Xmx4g"
+          cd mobile
+          BUILD_INFO=$(eas build:list --limit=1 --platform=android --non-interactive --json)
+          BUILD_URL=$(echo $BUILD_INFO | jq -r '.[0].artifacts[0].url')
+          echo "BUILD_URL=$BUILD_URL" >> $GITHUB_ENV
 
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: SmartHome-Monitoring-v1.0.apk
-          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
-
-      - name: Upload APK to GitHub Release
-        if: success()
-        uses: softprops/action-gh-release@v2
-        with:
-          files: mobile/android/app/build/outputs/apk/debug/app-debug.apk
-          tag_name: v1.0.${{ github.run_number }}
-          name: Release v1.0.${{ github.run_number }}
+      - name: Display Build Information
+        run: |
+          echo "## APK Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "Download your APK from: ${{ env.BUILD_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Or visit the EAS dashboard:" >> $GITHUB_STEP_SUMMARY
+          echo "https://expo.dev/accounts/[your-account]/projects/smart-home-monitoring-system/builds" >> $GITHUB_STEP_SUMMARY
